@@ -61,14 +61,21 @@ def recognize_and_mark():
 
 def mark_attendance(name):
     date_str = datetime.now().strftime("%Y-%m-%d")
-    time_str = datetime.now().strftime("%H:%M;%S")
+    time_str = datetime.now().strftime("%H:%M:%S")
 
-    if not os.path.exists("attedance.csv"):
+    if not os.path.exists("attendance.csv"):
         with open("attendance.csv","w") as f:
-            f.write("Name \t,Date\t,Time\t\n")
+            f.write("Name,Date,Time\n")
+    
+    df = pd.read_csv("attendance.csv")
+    if ((df['Name'] == name) & (df['Date'] == date_str)).any():
+        print(f"{name} already marked today.")
+        return False
+    
+
 
     with open("attendance.csv","a") as f:
-        f.write(f"{name}\t,{date_str}\t,{time_str}\t\n")  
+        f.write(f"{name},{date_str},{time_str}\n")
     if f :
         print(f"{name}")       
 
