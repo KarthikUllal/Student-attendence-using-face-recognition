@@ -4,22 +4,22 @@ import os
 import numpy as np
 
 def register_face(name, roll_number):
-    cam = cv2.VideoCapture(0)
+    cam = cv2.VideoCapture(0) # capture frame using the webcam .
     if not cam.isOpened():
         print("Error: Could not open webcam")
         return
 
-    encodings = []
+    encodings = [] #to store the encodings of the face 
 
-    while len(encodings) < 5:
-        ret, frame = cam.read()
-        print("Frame captured:", ret)
-        if not ret:
+    while len(encodings) < 5:  #captures encoding of faces untill it reaches 5
+        f, frame = cam.read()      #f holds boolean value for captured image and frame contains actuall image
+        print("Frame captured:", f)
+        if not f:
             print("Failed to grab frame")
             break
 
-        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        boxes = face_recognition.face_locations(rgb)
+        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) #converting BGR color format of frame to RGB
+        boxes = face_recognition.face_locations(rgb)    #holds coordinates of faces
         print(f"Faces found: {len(boxes)}")
 
         if boxes:
