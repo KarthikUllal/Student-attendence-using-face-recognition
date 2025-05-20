@@ -5,6 +5,7 @@ import numpy as np
 from datetime import datetime
 import pandas as pd
 import time  # added for message timing
+import mysql.connector
 
 def recognize_and_mark():
     known_encodings = [] 
@@ -82,34 +83,43 @@ def recognize_and_mark():
 def mark_attendance(full_name):
     roll_no, name = full_name.split("_")
     date_str = datetime.now().strftime("%Y-%m-%d")
-    time_str = datetime.now().strftime("%I:%M:%S %p")  # 12-hour format with AM/PM
-    folder = "attendance_records"
-    os.makedirs(folder, exist_ok=True)
-    filename = os.path.join(folder, f"attendance_{date_str}.csv")
-    if not os.path.exists(filename):
-        with open(filename, "w") as f:
-            f.write("Roll No,Name,Date,Time\n")
+    time_str = datetime.now().strftime("%H:%M:%S")
+    # connecting to mysql server
+    try:
+        con = mysql.connector.connect(
+            host = "localhost",
+            user = "root",
+            password = "root",
+            database = "attendance_system" 
+        )
 
-    df = pd.read_csv(filename, dtype=str)  # Ensure strings
-    df.columns = df.columns.str.strip()   # Clean column names
-    # Strip all values using DataFrame.map() on df.astype(str)
-    df = df.astype(str).map(lambda x: x.strip())
+        cursor = con.cursor()
 
-    # Check for duplicate
-    already_marked = ((df["Roll No"] == roll_no) & (df["Date"] == date_str)).any()
-    if already_marked:
-        message = f"{name} ({roll_no}) already marked today."
+        # To ensure there is no duplicate entries of same date
+        query = "SELECT * FROM attendance WHERE rollno=%s AND date=%s" 
+        cursor.execute(query, (roll_no, date_str))
+        result = cursor.fetchone()
+
+        if result:
+            message = f"{name} ({roll_no}) already marked today"
+            print(message)
+            return False,message
+        
+
+        # if there is no entry then update the database by inserting record
+        insert_query = "INSERT INTO attendance (rollno, name, date, time) VALUES (%s, %s, %s, %s)"
+        cursor.execute(insert_query, (roll_no, name, date_str, time_str))
+        con.commit()
+
+        message = f"{name} ({roll_no}) marked at {time_str}"
         print(message)
-        return False, message
-
-    # Append attendance
-    with open(filename, "a") as f:
-        f.write(f"{roll_no},{name},{date_str},{time_str}\n")
-    message = f"{name} ({roll_no}) marked at {time_str}"
-    print(message)
-    return True, message
-
-
-
+        return True, message
+    
+    except mysql.connector.Error as e:
+        print("Database Error:", e)
+        return False, "Error connecting to database"
+    finally :
+        cursor.close()
+        con.close()
 if __name__ == "__main__":
     recognize_and_mark()
