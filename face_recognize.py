@@ -83,15 +83,15 @@ def mark_attendance(full_name):
     roll_no, name = full_name.split("_")
     date_str = datetime.now().strftime("%Y-%m-%d")
     time_str = datetime.now().strftime("%I:%M:%S %p")  # 12-hour format with AM/PM
-    filename = "attendance.csv"
-
+    folder = "attendance_records"
+    os.makedirs(folder, exist_ok=True)
+    filename = os.path.join(folder, f"attendance_{date_str}.csv")
     if not os.path.exists(filename):
         with open(filename, "w") as f:
             f.write("Roll No,Name,Date,Time\n")
 
     df = pd.read_csv(filename, dtype=str)  # Ensure strings
     df.columns = df.columns.str.strip()   # Clean column names
-
     # Strip all values using DataFrame.map() on df.astype(str)
     df = df.astype(str).map(lambda x: x.strip())
 
