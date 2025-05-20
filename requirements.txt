@@ -3,3 +3,7 @@ opencv-python
 face_recognition
 numpy
 pandas
+
+for updating database in git hub manualy
+
+mysqldump -u root -p attendance_system > attendance_system.sql
