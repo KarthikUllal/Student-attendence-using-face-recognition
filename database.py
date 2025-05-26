@@ -10,11 +10,14 @@ def get_connection():
         database = "attendance_system"
     )
 
-def add_student(name,usn,course,section,face_encoding_blob):
+def add_student(name, usn, course, section, year, semester, face_encoding_blob):
     con = get_connection()
     cur = con.cursor()
-    q = "INSERT INTO students (name,usn,course,section,face_encoding) VALUES (%s, %s, %s, %s, %s)"
-    cur.execute(q,(name, usn, course, section, face_encoding_blob))
+    q = """
+        INSERT INTO students (name, usn, course, section, year, semester, face_encoding)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """
+    cur.execute(q, (name, usn, course, section, year, semester, face_encoding_blob))
     con.commit()
     con.close()
 
