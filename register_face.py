@@ -3,16 +3,21 @@ import cv2
 import face_recognition
 import numpy as np
 from database import add_student
+from database import get_all_courses, get_all_sections
 from util import draw_face_box
 
 def register_face():
     st.title("📸 Register New Student")
 
+    
+    courses = get_all_courses()
+    sections = get_all_sections()
+
     with st.form("registration_form"):
         name = st.text_input("Enter Student Name:")
         usn = st.text_input("Enter USN:")
-        course = st.text_input("Enter Course:")
-        section = st.text_input("Enter Section:")
+        course = st.selectbox("Select Course", courses if courses else ["MCA", "MBA", "BTech"])
+        section = st.selectbox("Select Section", sections if sections else ["A", "B"])
         year = st.text_input("Enter Year:")
         sem = st.text_input("Enter Semester:")
         submitted = st.form_submit_button("Start Face Registration")
