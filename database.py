@@ -58,6 +58,24 @@ def get_subjects_by_course_and_semester(course, semester):
     return result
 
 
+def get_all_students():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, name, usn FROM students")
+    students = cursor.fetchall()
+    conn.close()
+    return students
+
+def get_student_by_usn(usn):
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT id, name, course, semester FROM students WHERE usn = %s", (usn,))
+    student = cursor.fetchone()
+    conn.close()
+    return student
+
+
+
 # def get_students_in_subject(subject_id):
 #     conn = get_connection()
 #     cursor = conn.cursor()
