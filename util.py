@@ -7,7 +7,7 @@ from database import get_all_face_encodings
 
 # converting bgr format to rgb
 def convert_bgr_to_rgb(frame):
-    return cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+    return cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) 
 
 
 # code for drawing rectangle around the face
