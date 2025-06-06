@@ -41,13 +41,25 @@ def enroll_student_in_subject(student_id,subject_id):
 def mark_attendance(student_id, subject_id, date, status):
     conn = get_connection()
     cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT status FROM attendance 
+        WHERE student_id = %s AND subject_id = %s AND date = %s
+    """, (student_id, subject_id, date))
+    result = cursor.fetchone()
+
+    if result:
+        conn.close()
+        return "already_marked"  # Attendance already present
+
     cursor.execute("""
         INSERT INTO attendance (student_id, subject_id, date, status)
         VALUES (%s, %s, %s, %s)
-        ON DUPLICATE KEY UPDATE status = %s
-    """, (student_id, subject_id, date, status, status))
+    """, (student_id, subject_id, date, status))
     conn.commit()
     conn.close()
+    return "marked"
+
 
 def get_subjects_by_course_and_semester(course, semester):
     con = get_connection()

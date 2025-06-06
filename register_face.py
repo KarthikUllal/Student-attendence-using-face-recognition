@@ -7,7 +7,7 @@ from database import get_all_courses, get_all_sections
 from util import draw_face_box
 
 def register_face():
-    st.title("📸 Register New Student")
+    st.title("Register New Student")
 
     
     courses = get_all_courses()
@@ -25,12 +25,12 @@ def register_face():
     if submitted:
         # Check all fields
         if not all([name.strip(), usn.strip(), course.strip(), section.strip(), year.strip(), sem.strip()]):
-            st.warning("⚠️ Please fill all fields.")
+            st.warning("Please fill all fields.")
             return
 
         cam = cv2.VideoCapture(0)
         if not cam.isOpened():
-            st.error("❌ Error: Could not access webcam.")
+            st.error("Error: Could not access webcam.")
             return
 
         st.info("Capturing face... Please stay still.")
@@ -40,7 +40,7 @@ def register_face():
         while len(encodings) < 5:
             ret, frame = cam.read()
             if not ret:
-                st.error("❌ Failed to read from webcam.")
+                st.error("Failed to read from webcam.")
                 break
 
             rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -63,9 +63,9 @@ def register_face():
             encoding_blob = avg_encoding.tobytes()
 
             add_student(name, usn, course, section, year, sem, encoding_blob)
-            st.success(f"✅ {name} ({usn}) registered successfully!")
+            st.success(f"{name} ({usn}) registered successfully!")
         else:
-            st.error("❌ No face detected. Try again.")
+            st.error("No face detected. Try again.")
 
 if __name__ == "__main__":
     register_face()

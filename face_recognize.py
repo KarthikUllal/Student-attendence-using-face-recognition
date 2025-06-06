@@ -7,7 +7,7 @@ from util import convert_bgr_to_rgb, draw_face_box
 from database import get_subjects_by_course_and_semester, get_students_in_subject, mark_attendance, get_all_courses
 
 def recognize_and_mark():
-    st.title("🎯 Real-time Face Recognition Attendance")
+    st.title("Take Attendance")
 
     course = st.selectbox("Select Course", get_all_courses())
     semester = st.selectbox("Select Semester", ["1", "2", "3", "4", "5", "6", "7", "8"])
@@ -17,8 +17,10 @@ def recognize_and_mark():
         st.warning("No subjects found for this course and semester.")
         return
 
-    subject_id, subject_name = st.selectbox("Select Subject", subjects, format_func=lambda x: x[1])
-    st.write(f"### Subject: {subject_name}")
+    subject_dict = {name: id for id, name in subjects}
+    selected_name = st.selectbox("Select Subject", list(subject_dict.keys()))
+    subject_id = subject_dict[selected_name]
+    subject_name = selected_name
 
     students = get_students_in_subject(subject_id, int(semester), int(semester))
     if not students:
@@ -61,27 +63,28 @@ def recognize_and_mark():
 
                 draw_face_box(frame, box, matched_name)
 
-                # Mark attendance
+    
                 today = datetime.date.today().strftime("%Y-%m-%d")
-                mark_attendance(matched_id, subject_id, today, "Present")
+                status = mark_attendance(matched_id, subject_id, today, "Present")
 
-                st.success(f"✅ Attendance marked for {matched_name}")
-
+                if status == "already_marked":
+                    st.warning(f"Attendance already marked for {matched_name}")
+                else:
+                     st.success(f"Attendance marked for {matched_name}")
+                     st.success("Attendance marked. Thank you!")
                 recognized = True
                 break
             else:
                 draw_face_box(frame, box, "Unknown")
 
-       # Show frame in Streamlit
+       
         stframe.image(frame, channels="BGR")
 
         if recognized:
-            cam.release()  # Ensure camera is released
-            stframe.empty()  # Clear video display
-            st.success("✅ Attendance marked. Thank you!")
-            break
+            cam.release()  
+            stframe.empty()  
+            
 
-    # Final cleanup in case loop exits without recognition
     if cam.isOpened():
         cam.release()
 

@@ -49,4 +49,4 @@ def show_success_message(name):
 
 def show_error_message(msg):
     import streamlit as st
-    st.error(f"❌ Error: {msg}")
+    st.error(f"Error: {msg}")
