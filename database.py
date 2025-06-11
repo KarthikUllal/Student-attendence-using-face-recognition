@@ -133,7 +133,8 @@ def get_all_courses():
     cursor.execute("SELECT DISTINCT course FROM students")
     courses = [row[0] for row in cursor.fetchall()]
     conn.close()
-    return courses
+    defaults = {"MCA", "MBA", "BTech"}
+    return sorted(defaults.union(courses))
 
 def get_all_sections():
     conn = get_connection()
@@ -141,5 +142,44 @@ def get_all_sections():
     cursor.execute("SELECT DISTINCT section FROM students")
     sections = [row[0] for row in cursor.fetchall()]
     conn.close()
-    return sections
+    defaults = {"A", "B"}
+    return sorted(defaults.union(sections))
 
+def get_all_subjects():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT DISTINCT subject_name FROM subjects")
+    subjects = [row[0] for row in cursor.fetchall()]
+    conn.close()
+    return subjects
+
+def get_attendance(section, subject_name, date=None):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    query = """
+        SELECT 
+            students.name, 
+            students.usn, 
+            subjects.subject_name, 
+            attendance.date, 
+            attendance.status
+        FROM attendance
+        JOIN students ON attendance.student_id = students.id
+        JOIN subjects ON attendance.subject_id = subjects.id
+        WHERE students.section = %s AND subjects.subject_name = %s
+    """
+
+    params = [section, subject_name]
+
+    if date:
+        query += " AND attendance.date = %s"
+        params.append(date)
+
+    query += " ORDER BY attendance.date DESC"
+
+    cursor.execute(query, params)
+    records = cursor.fetchall()
+    conn.close()
+
+    return records

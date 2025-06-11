@@ -1,8 +1,9 @@
 import streamlit as st
 from register_face import register_face
 from face_recognize import  recognize_and_mark
-from admin import create_subject
+from add_subject import create_subject
 from enroll_student import enroll_student
+from view_attendance import view_attendance
 
 st.set_page_config(page_title="Face Recognition Attendance System", layout="centered")
 st.title("🎓 Student Attendance System Using Face Recognition")
@@ -16,7 +17,8 @@ page = st.sidebar.radio(
         "🧍 Register Face",
         "📝 Enroll Student",
         "🛠️ Add Subjects",
-        "✅ Mark Attendance"
+        "✅ Mark Attendance",
+        "View Attendance"
     ]
 )
 
@@ -26,5 +28,7 @@ elif page == "📝 Enroll Student":
     enroll_student()
 elif page == "🛠️ Add Subjects":
     create_subject()
+elif page == "View Attendance":
+    view_attendance()
 else:
     recognize_and_mark()
