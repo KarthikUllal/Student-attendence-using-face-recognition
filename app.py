@@ -4,6 +4,8 @@ from face_recognize import  recognize_and_mark
 from add_subject import create_subject
 from enroll_student import enroll_student
 from view_attendance import view_attendance
+from view_students import view_students
+
 
 st.set_page_config(page_title="Face Recognition Attendance System", layout="centered")
 st.title("🎓 Student Attendance System Using Face Recognition")
@@ -16,19 +18,23 @@ page = st.sidebar.radio(
     [
         "🧍 Register Face",
         "📝 Enroll Student",
-        "🛠️ Add Subjects",
+        "➕ Add Subjects",
         "✅ Mark Attendance",
-        "View Attendance"
+        "📊 View Attendance",
+        "📚 View Student Records"
     ]
 )
+
 
 if page == "🧍 Register Face":
     register_face()
 elif page == "📝 Enroll Student":
     enroll_student()
-elif page == "🛠️ Add Subjects":
+elif page == "📚 View Student Records":
+    view_students()
+elif page == "➕ Add Subjects":
     create_subject()
-elif page == "View Attendance":
+elif page == "📊 View Attendance":
     view_attendance()
 else:
     recognize_and_mark()

@@ -78,6 +78,14 @@ def get_all_students():
     conn.close()
     return students
 
+def get_students(course, section): # To get students for displaying their details according to course and section
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT name, usn, course, section from students where course = %s and section = %s",(course, section))
+    students = cursor.fetchall()
+    conn.close()
+    return students
+
 def get_student_by_usn(usn):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -133,7 +141,7 @@ def get_all_courses():
     cursor.execute("SELECT DISTINCT course FROM students")
     courses = [row[0] for row in cursor.fetchall()]
     conn.close()
-    defaults = {"MCA", "MBA", "BTech"}
+    defaults = {"MCA", "MBA"}
     return sorted(defaults.union(courses))
 
 def get_all_sections():

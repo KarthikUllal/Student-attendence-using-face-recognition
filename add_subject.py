@@ -7,7 +7,7 @@ def create_subject():
     subject_name = st.text_input("Subject Name:")
 
     courses = get_all_courses()
-    course = st.selectbox("Select Course:", courses if courses else ["MCA", "MBA", "BTech"])
+    course = st.selectbox("Select Course:", courses if courses else ["MCA", "MBA"])
 
     semester = st.text_input("Semester:")
 

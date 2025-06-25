@@ -13,11 +13,17 @@ def register_face():
     courses = get_all_courses()
     sections = get_all_sections()
 
+    default_courses = ["MCA", "MBA"]
+    default_sections = ["A", "B"]
+
     with st.form("registration_form"):
         name = st.text_input("Enter Student Name:")
         usn = st.text_input("Enter USN:")
-        course = st.selectbox("Select Course", courses if courses else ["MCA", "MBA", "BTech"])
-        section = st.selectbox("Select Section", sections if sections else ["A", "B"])
+        all_courses = sorted(set(courses + default_courses)) if courses else default_courses
+        all_sections = sorted(set(sections + default_sections)) if sections else default_sections
+
+        course = st.selectbox("Select Course", all_courses)
+        section = st.selectbox("Select Section", all_sections)
         year = st.text_input("Enter Year:")
         sem = st.text_input("Enter Semester:")
         submitted = st.form_submit_button("Start Face Registration")
